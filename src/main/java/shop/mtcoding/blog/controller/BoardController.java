@@ -1,5 +1,7 @@
 package shop.mtcoding.blog.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,10 +49,10 @@ public class BoardController {
     public String index(
             String keyword,
             @RequestParam(defaultValue = "0") Integer page,
-            HttpServletRequest request) {
+            HttpServletRequest request) throws UnsupportedEncodingException {
         // 1. 유효성 검사 X
         // 2. 인증검사 X
-
+        
         List<Board> boardList = null;
         int totalCount = 0;
         if (keyword == null) {
@@ -59,8 +61,10 @@ public class BoardController {
         } else {
             boardList = boardRepository.findAll(page, keyword); // page = 1
             totalCount = boardRepository.count(keyword);
+            
         }
-
+         
+        
         // System.out.println("테스트 : totalCount :" + totalCount);
         int totalPage = totalCount / 3; // totalPage = 1
         if (totalCount % 3 > 0) {
@@ -78,10 +82,11 @@ public class BoardController {
         request.setAttribute("last", last);
         request.setAttribute("totalPage", totalPage);
         request.setAttribute("totalCount", totalCount);
-
+        request.setAttribute("keyword", keyword);
+        
         return "index";
     }
-
+ 
     @PostMapping("/board/{id}/update")
     public String update(@PathVariable Integer id, UpdateDTO updateDTO) {
         // 1. 인증 검사
